@@ -23,7 +23,7 @@ The [Malware Bazaar](https://bazaar.abuse.ch) is just that place. I searched for
 
 **Take Caution When Downloading From Any Site That Hosts Malware These Are Live Samples**
 
-![Malware Bazaar](assets/img/AsyncRAT/Malware%20Bazaar.png) 
+![Malware Bazaar](assets/img/AsyncRAT/Malware Bazaar.png) 
 
 
 ### The Analysis
@@ -43,7 +43,7 @@ In comes [PEStudio](https://www.winitor.com)! It can identify a multitude of thi
 
 Ok a 32bit executable written in C#
 
-![PEStudio](assets/img/AsyncRAT/Pestudio%20info.png)
+![PEStudio](assets/img/AsyncRAT/Pestudio info.png)
 
 
 #### dnSpy
@@ -57,17 +57,17 @@ Welp, it was pretty straightforward actually. Seems like the best place to start
 
 The Entry Point is the very first instruction that executes in a process. This is where the Operating System gives control to the application so it can start performing these instructions that the Entry Point points to.
 
-![Entry Point](assets/img/AsyncRAT/Entry%20Point.png)
+![Entry Point](assets/img/AsyncRAT/Entry Point.png)
 
 This led to the `Client` namespace which contained the `Settings` class. Here I noticed something that was in the original blog post I referenced earlier.
 
-![Client to Settings](assets/img/AsyncRAT/Client%20to%20Settings.png)
+![Client to Settings](assets/img/AsyncRAT/Client to Settings.png)
 
 Within the `Settings` class there is a method called `InitializeSettings()`, this basically contains the hardcoded config for the malware which is encrypted before execution to avoid detection via static analysis.
 
 ![InitializeSettings](assets/img/AsyncRAT/InitializeSettings.png)
 
-![Encrypted Variables](assets/img/AsyncRAT/Encrypted%20Variables.png)
+![Encrypted Variables](assets/img/AsyncRAT/Encrypted Variables.png)
 
 The use of the `InitializeSettings` method is a somewhat ingenious technique. It serves two purposes: the first is that it doesn't require the process to rely on an external .config file which makes its footprint smaller, and the second is to decrypt these configs the malware would have to be executed.
 
@@ -75,29 +75,29 @@ Looking further down the assembly explorer I noticed some very interesting names
 LBased on the namespaces it seems like this RAT has been modified to be an infostealer targeting a wide range of data such as: passwords and credit cards stored in browsers, Crypto wallets, Discord and Telegram tokens, keystrokes, and the ability to take screenshots of the victims Webcam.
 
 Browser Information Stealing:
-![Stealing Browser Info](assets/img/AsyncRAT/Targeting%20browser%20info.png)
+![Stealing Browser Info](assets/img/AsyncRAT/Targeting browser info.png)
 
 Stealing Crypto Wallets:
-![Crypto](assets/img/AsyncRAT/Targeting%20Crypto%20wallets.png)
+![Crypto](assets/img/AsyncRAT/Targeting Crypto wallets.png)
 
 Discord and Telegram token theft:
-![Discord Token](assets/img/AsyncRAT/Targeting%20Discord%20token.png)
+![Discord Token](assets/img/AsyncRAT/Targeting Discord token.png)
 
 Sending Keylogger logs to Telegram:
-![Exfil of Keylogger](assets/img/AsyncRAT/Sending%20Keylogging%20to%20Telegram.png)
+![Exfil of Keylogger](assets/img/AsyncRAT/Sending Keylogging to Telegram.png)
 
 Ok, so now I am 100% sure this is an infostealer and I noticed in the `InitializeSettings` method there were two fields that referenced Telegram: `TelegramChatID` and `TelegramToken`. It seems pretty clear that this modified AsyncRAT is an infostealer that reports its stolen data to a Telegram channel via a bot. However the variables are encrypted which means I would need to run the malware to see the decrypted data.
 
 In comes dnSpy once again to save the day. I can "partially" run the malware in dnSpy by setting a breakpoint and view what the process has done up until that point in memory. I set the breakpoint to the return at the very bottom of the `InitializeSettings` method, then run the debugger.
 
 Setting the Breakpoint:
-![Breakpoint](assets/img/AsyncRAT/Breakpoint%20set.png)
+![Breakpoint](assets/img/AsyncRAT/Breakpoint set.png)
 
 Once the debugger has ran the process up to my breakpoint I check the static fields in memory.
 And there they are. All the variables in cleartext!
 
 Decrypted malware config variables:
-![Fields Decrypted](assets/img/AsyncRAT/all%20variables%20decrypted.png)
+![Fields Decrypted](assets/img/AsyncRAT/all variables decrypted.png)
 
 There is some very juicy info here, but we will keep moving and look more into the malware sample. 
 One thing I did notice in the decrypted settings is that the `Anti` field is `false` (which would have made this analysis a lot more difficult). This was the anti analysis method that is seen in other AsyncRAT samples. Even though this is a modified version of AsyncRAT it still contained the `AntiAnalysis` method which I took an interest in and thought it should at least be brought up here. It checks for a multitude of things such as static analysis tools, wether it is sand boxed or not, and if it's being ran in a hypervisor such as VirtualBox or VMware.
@@ -121,13 +121,13 @@ Well in my searching for how I could use the Telegram Token and Chat ID to gain 
 I was right! Their channel was still active!
 Below is the bots name, username, channel access, and the name of the group.
 
-![Telegram Bot](assets/img/AsyncRAT/Telegram%20bot%20info.png)
+![Telegram Bot](assets/img/AsyncRAT/Telegram bot info.png)
 
 From its name (ONE FOR ALL) I can discern that this bot may be used by multiple threat actors, with this group channel (XWorm up) being a repository to gather and share stolen data.
 
 I was also able to find the chats administrator.
 
-![Chat Admin](assets/img/AsyncRAT/Telegram%20admin%20info.png)
+![Chat Admin](assets/img/AsyncRAT/Telegram admin info.png)
 
 I was able to pull the number of messages that were in the group chat and it was over 6000 messages. 
 Based on the permissions of the bot I couldn't read any messages, but I was able to delete quite a few and felt good doing it. Hopefully it at least put a kink in their operation.
@@ -140,11 +140,11 @@ In some of the screen shots you may have noticed the name WorldWind come up a fe
 Naturally I had to check my sample for this.
 And wouldn't you know it! There it was, the info from my stealer was being sent to another Telegram chat ID. The only difference in mine is the Telegram Token was being hosted on pastebin.
 
-![The Other Telegram](assets/img/AsyncRAT/The%20Other%20Telegram.png)
+![The Other Telegram](assets/img/AsyncRAT/The Other Telegram.png)
 
 Unfortunately, I was unable to cause any disruption to this one. I received 401 unauthorized codes for everything.
 
-![Connecting to the Other Telegram](assets/img/AsyncRAT/Connecting%20to%20Other.png)
+![Connecting to the Other Telegram](assets/img/AsyncRAT/Connecting to Other.png)
 
 
 ### What a wild ride
