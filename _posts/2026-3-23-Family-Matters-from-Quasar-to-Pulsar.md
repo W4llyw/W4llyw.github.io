@@ -133,7 +133,7 @@ My next adventure may be another .Net app or a generic PE I am not sure yet as I
 
 
 ## IOCs
-#### [MITRE ATT&CK and Malware Behavior Catalog](https://mandiant.github.io/capa/explorer/#/analysis?rdoc=https://raw.githubusercontent.com/W4llyw/Blog/refs/heads/main/Images/QuasarRAT/Pulsar_Capa.json)
+#### [MITRE ATT&CK and Malware Behavior Catalog](https://mandiant.github.io/capa/explorer/#/analysis?rdoc=https://raw.githubusercontent.com/W4llyw/Blog/refs/heads/main/Capa/Pulsar_Capa.json)
 brought to you by [Mandiant Capa](https://github.com/mandiant/capa)
 
 #### Hashes:
