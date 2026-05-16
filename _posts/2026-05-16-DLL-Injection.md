@@ -47,20 +47,20 @@ First off the malware will need to look for a commonly used process running on t
 
 With this in mind I want to set a breakpoint at `Process32First` to see if it is being compared to a process name. Since `Process32First` is a WinAPI I can easily find it in the malware's "Symbols" tab. From here select your malicious exe, sort by type import, find `Process32First`, and set your breakpoint.
 
-![Process32First]('assets/img/DLL_Inject/Process32First.png')
+![Process32First]('assets/img/DLL-Inject/Process32First.png')
 
 Before running the debugger though I wanted to also set a breakpoint at `VirtualAllocEX`, this will tell me what it is trying to be inject since it needs to allocate space for it. 
 
-![VirtualAllocEx](assets/img/DLL_Inject/VirtualAllocEx.png)
+![VirtualAllocEx](assets/img/DLL-Inject/VirtualAllocEx.png)
 
 With these two set we can run the debugger and see what we get.
 The first breakpoint we set gets hit and as expected we see the targeted process being held in a general register `R14` and that target is `notepad.exe`!
 
-![Targeted Process](assets/img/DLL_Inject/Target_process_bp.png)
+![Targeted Process](assets/img/DLL-Inject/Target-process-bp.png)
 
 Now on to the `VirtualAllocEx` breakpoint to see what is trying to be injected into notepad. Nice we have the malicious DLL location!
 
-![Mal DLL](assets/img/DLL_Inject/Target_dll_bp.png)
+![Mal DLL](assets/img/DLL-Inject/Target-dll-bp.png)
 
 With this information we can stop the debugger (if this was malware you wouldn't want to let it run) go find that malicious DLL and start the reverse engineering process all over again.
 
