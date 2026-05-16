@@ -25,8 +25,11 @@ XOR takes the payload and the key and performs its exclusive OR operation on it 
 *Note if the key is smaller than the payload it just wraps around.*
 
 Payload: 0 | 1 | 1 | 1
+
 Key:        0 | 0 | 1 | 0
+
 (is this different?)
+
 Output:  0 | 1 | 0 | 1
 
 ### XOR POC
