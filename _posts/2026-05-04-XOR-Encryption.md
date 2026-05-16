@@ -1,16 +1,3 @@
----
-title: XOR Encryption
-date: 2026-05-04
-categories:
-  - Learning
-  - Reverse Engineering
-tags:
-  - malware
-  - learning
-  - reverse engineering
-  - xor
-  - encryption
----
 EXclusive OR(XOR) is one of the most common forms of payload obfuscation via encryption used by malware developers. There are a few reasons for this, one is that it is a native bitwise operation, meaning there is no need to load external libraries or APIs to perform the encryption, the other two are because it is fast and simple to use.
 
 ### What is XOR
@@ -24,13 +11,15 @@ Key: 2 = 0010
 XOR takes the payload and the key and performs its exclusive OR operation on it (the "is this different" question).
 *Note if the key is smaller than the payload it just wraps around.*
 
-Payload: 0 | 1 | 1 | 1
 
-Key:        0 | 0 | 1 | 0
+| Data     | Bits               |
+| -------- | ------------------ |
+| Payload: | 0 \| 1 \| 1 \| 1   |
+| Key:     | 0 \| 0 \| 1 \| 0   |
+| XOR:     | is this different? |
+| Output:  | 0 \| 1 \| 0 \| 1   |
 
-(is this different?)
 
-Output:  0 | 1 | 0 | 1
 
 ### XOR POC
 Below is a super simple proof of concept for shellcode encryption and decryption that I made as part of an exercise.
