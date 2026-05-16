@@ -47,7 +47,7 @@ First off the malware will need to look for a commonly used process running on t
 
 With this in mind I want to set a breakpoint at `Process32First` to see if it is being compared to a process name. Since `Process32First` is a WinAPI I can easily find it in the malware's "Symbols" tab. From here select your malicious exe, sort by type import, find `Process32First`, and set your breakpoint.
 
-![Process32First]('assets/img/DLL-Inject/Process32First.png')
+![Process32First](assets/img/DLL-Inject/Process32First.png)
 
 Before running the debugger though I wanted to also set a breakpoint at `VirtualAllocEX`, this will tell me what it is trying to be inject since it needs to allocate space for it. 
 

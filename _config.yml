@@ -23,7 +23,6 @@ description: >- # used by seo meta and the atom feed
 
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
-baseurl: "https://W4llyw.github.io"
 url: "https://W4llyw.github.io"
 
 github:
@@ -64,7 +63,7 @@ webmaster_verifications:
 # Web Analytics Settings
 analytics:
   google:
-    id: # fill in your Google Analytics ID
+    id: "G-LZG49TQKZQ"
   goatcounter:
     id: # fill in your GoatCounter ID
   umami:
