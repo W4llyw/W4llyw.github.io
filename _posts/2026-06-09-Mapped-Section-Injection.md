@@ -14,13 +14,18 @@ tags:
 Imagine you and a coworker are working on the same project. You, being the project leader, create a collaborative space that you can both access. As the project lead, any changes made by you to the project they can see, and any tasks you create in the shared space they are voluntold to do. This is basically what mapping injection is. A mapped space of memory is shared between processes (the collaborative space) and anything done within the shared memory space  is carried out for both processes. The malicious process (project leader) can place a payload within this shared map then force the other process (coworker) to execute it by pointing to its address. This is where mapping injection can really takeoff because it now can force a legitimate process to execute its payload either by process injection, APC injection, or thread hijacking.
 
 This places mapping injection into multiple sub techniques within MITRE:
+
 [T1055](https://attack.mitre.org/techniques/T1055/):
-	[T1055.002 - PE Injection](https://attack.mitre.org/techniques/T1055/002/)
-	[T1055.003 - Thread Hijacking](https://attack.mitre.org/techniques/T1055/003/)
-	[T1055.004 - APC Injection](https://attack.mitre.org/techniques/T1055/004/)
+
+  [T1055.002 - PE Injection](https://attack.mitre.org/techniques/T1055/002/)
+
+  [T1055.003 - Thread Hijacking](https://attack.mitre.org/techniques/T1055/003/)
+
+  [T1055.004 - APC Injection](https://attack.mitre.org/techniques/T1055/004/)
 
 ### How this is done and why
 The way mapping injection works is by using 3 WinAPIs `CreateFileMapping`, `MapViewOfFile`, and `MapViewOfFile2`. `CreateFileMapping` creates a file mapping object that maps to a files content on disk into memory, then `MapViewOfFile` takes the handle of the mapping object returned by `CreateFileMapping` and maps it into the address space of a process. `MapViewOfFile2` is used to map that same mapping object's address into a remote process. A malicious payload is then written to the mapped section which will be updated for both the `MapViewOfFile` and the `MapViewOfFile2`. Now that another process shares that same mapped address of malicious code the legitimate remote process/thread is created in a suspended state. Then it gets told that its next instruction (EIP or RIP) is the malicious code's address in memory. Once the thread or process is resumed it results in the malicious payload being executed.
+
 The reason this is used in malware is because with other techniques that use things like `VirtualAlloc` and `VirtualAllocEx` they create 'private' memory types, and these types are heavily monitored by any decent EDR or AV. When performing mapping injections the memory type that is created is of the 'mapped' type which is used by other applications like DLLs and other common executables. This creates a lot of noise for the malicious action to hide in and away from EDR. 
 
 ### The Reverse
